@@ -30,5 +30,5 @@ class CustomDataLoader(Dataset):
 
 if __name__ == '__main__':
 
-    dataset = CustomDataLoader(csv_path="data/labels.csv", audio_dir="data/audio/")
+    dataset = CustomDataLoader(csv_path="data_csv/labels.csv", audio_dir="data_csv/audio/")
     dataloader = DataLoader(dataset, batch_size=16, shuffle=True)

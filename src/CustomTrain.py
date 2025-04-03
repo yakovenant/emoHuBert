@@ -219,9 +219,7 @@ def get_triplets_input_values(batch, feature_extractor):
 
 if __name__ == '__main__':
 
-    ds = load_dataset("xbgoose/dusha")
-
-    data_root = '/content/drive/MyDrive/НИР/Данные'
+    data_root = '/media/ssd/Dusha'
     data_files = {"train": f"{data_root}/triplets_480.csv"}
     ds = load_dataset("csv", data_files=data_files)
 
@@ -230,10 +228,7 @@ if __name__ == '__main__':
     model_id = "facebook/hubert-base-ls960"
     embedding_size = 128  # 256
 
-    config = AutoConfig.from_pretrained(
-        model_id,
-        embedding_size
-    )
+    config = AutoConfig.from_pretrained(model_id)
 
     feature_extractor = Wav2Vec2FeatureExtractor.from_pretrained(
         model_id,
