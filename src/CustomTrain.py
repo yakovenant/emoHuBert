@@ -11,6 +11,7 @@ from transformers import (
 from transformers.utils.generic import ModelOutput
 
 #import librosa
+import torchaudio
 import numpy as np
 
 import torch
@@ -196,9 +197,9 @@ def get_input_values(batch, feature_extractor):
 
 # Для датасета с триплетами
 def speech_file_triplets_to_arrays(batch):
-    batch["anchor_input_values"] = librosa.load(f'{data_root}/{batch["anchor"]}', sr=16000, mono=False)[0]
-    batch["positive_input_values"] = librosa.load(f'{data_root}/{batch["positive"]}', sr=16000, mono=False)[0]
-    batch["negative_input_values"] = librosa.load(f'{data_root}/{batch["negative"]}', sr=16000, mono=False)[0]
+    batch["anchor_input_values"] = torchaudio.load(f'{data_root}/{batch["anchor"]}')[0]
+    batch["positive_input_values"] = torchaudio.load(f'{data_root}/{batch["positive"]}')[0]
+    batch["negative_input_values"] = torchaudio.load(f'{data_root}/{batch["negative"]}')[0]
     return batch
 
 def get_triplets_input_values(batch, feature_extractor):
@@ -207,7 +208,7 @@ def get_triplets_input_values(batch, feature_extractor):
         array = batch[key]
         input = feature_extractor(
             array,
-            sampling_rate=16000,
+            sampling_rate=feature_extractor.sampling_rate,
             padding=True,
             return_tensors="pt"
         )
@@ -219,8 +220,8 @@ def get_triplets_input_values(batch, feature_extractor):
 
 if __name__ == '__main__':
 
-    data_root = '/media/ssd/Dusha'
-    data_files = {"train": f"{data_root}/triplets_480.csv"}
+    data_root = '/media/ssd'  # dusha
+    data_files = {"train": f"{data_root}/dusha/triplets_480.csv"}
     ds = load_dataset("csv", data_files=data_files)
 
     NUM_LABELS = 4
@@ -235,7 +236,7 @@ if __name__ == '__main__':
         config=config
     )
 
-    ds = ds.map(speech_file_triplets_to_arrays, num_proc=5)
+    ds = ds.map(speech_file_triplets_to_arrays, num_proc=1)
     ds = ds.map(
         get_triplets_input_values,
         fn_kwargs={"feature_extractor": feature_extractor}
